@@ -1,0 +1,38 @@
+<resources>
+    <string name="app_name">Project</string>
+    <string name="ready">Valmis</string>
+    <string name="settings">Asetukset</string>
+    <string name="effects">Tietoa haitoista</string>
+    <string name="stats">Tilastoja</string>
+    <string name="idk">Pornoo</string>
+    <string name="useNow">Käytä nyt</string>
+    <string name="hello">No huomenta vittu</string>
+    <string name="q1">Käytätkö tupakkaa vai nuuskaa?</string>
+    <string name="q1a1">Tupakkaa</string>
+    <string name="q1a2">Nuuskaa</string>
+    <string name="q2">Montako askia/kiekkoa menee viikossa?</string>
+    <string name="q2a1">0–1</string>
+    <string name="q2a2">2–3</string>
+    <string name="q2a3">4–5</string>
+    <string name="q2a4">5–6</string>
+    <string name="q2a5">+7</string>
+    <string name="q3">Miten voimakasta tupakkaa/nuuskaa käytät?</string>
+    <string name="q3a1">Mietoa</string>
+    <string name="q3a2">Keskivahvaa</string>
+    <string name="q3a3">Vahvaa</string>
+    <string name="q4">Missä ajassa haluat lopettaa?</string>
+    <string name="q4a1">1kk</string>
+    <string name="q4a2">2kk</string>
+    <string name="q4a3">3kk</string>
+    <string name="minutesTillSnus">Next pussi in: (mins.)</string>
+    <string name="minutesTillSmoke">Next rööki in: (mins.)</string>
+    <string name="nowSnus">Pussi huuleen!</string>
+    <string name="nowSmoke">Rööki huuleen! </string>
+    <string name="noMoreSnus">Tämän päivän nuuskat vedetty jo</string>
+    <string name="noMoreSmoke">Tämän päivän röökit vedetty jo</string>
+    <string name="gratz">Onnittelut!</string>
+    <string name="amountToday">Määrä tänään: </string>
+    <string name="daysToday">Päiviä jäljellä: </string>
+    <string name="default_notification_channel_id">default</string>
+
+</resources>
