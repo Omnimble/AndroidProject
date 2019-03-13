@@ -2,17 +2,17 @@ package com.example.project;
 
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.BroadcastReceiver;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.media.RingtoneManager;
 import android.net.Uri;
+import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -218,7 +218,8 @@ public class DefaultView extends AppCompatActivity {
                 } else {
                     cdt.setText(R.string.minutesTillSnus);
                 }
-                cd.setText(String.valueOf(millisUntilFinished / 1000 / 60));
+                //cd.setText(String.valueOf(millisUntilFinished / 1000 / 60));
+                cd.setText(convertMillis(millisUntilFinished));
                 updateUI();
             }
 
@@ -283,5 +284,14 @@ public class DefaultView extends AppCompatActivity {
             dateChangeReceiver = null;
         }
         super.onDestroy();
+    }
+
+    public String convertMillis(long durationInMillis) {
+        long millis = durationInMillis % 1000;
+        long second = (durationInMillis / 1000) % 60;
+        long minute = (durationInMillis / (1000 * 60)) % 60;
+        long hour = (durationInMillis / (1000 * 60 * 60)) % 24;
+
+        return String.format("%02d:%02d:%02d", hour, minute, second);
     }
 }

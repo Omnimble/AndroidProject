@@ -31,8 +31,8 @@
     <string name="stat5">2kk</string>
     <string name="statTop1">Montako tupakkaa on menny?</string>
     <string name="statTop2">Montako pussia on mennyt?</string>
-    <string name="minutesTillSnus">Next pussi in: (mins.)</string>
-    <string name="minutesTillSmoke">Next tupakka in: (mins.)</string>
+    <string name="minutesTillSnus">Next pussi in: </string>
+    <string name="minutesTillSmoke">Next tupakka in: </string>
     <string name="nowSnus">Pussi huuleen!</string>
     <string name="nowSmoke">Rööki huuleen! </string>
     <string name="noMoreSnus">Tämän päivän nuuskat käytetty</string>
@@ -40,6 +40,7 @@
     <string name="gratz">Onnittelut!</string>
     <string name="amountToday">Määrä tänään: </string>
     <string name="daysToday">Päiviä jäljellä: </string>
+    <string name="min">min. </string>
     <string name="default_notification_channel_id">default</string>
 
 </resources>

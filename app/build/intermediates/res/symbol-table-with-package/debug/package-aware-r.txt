@@ -686,8 +686,6 @@ id barrier
 id beginning
 id blocking
 id bottom
-id button2
-id button3
 id buttonPanel
 id center
 id center_horizontal
@@ -804,8 +802,6 @@ id start
 id stat1
 id stat2
 id stat3
-id stat4
-id stat5
 id statTop
 id strength1
 id strength2
@@ -820,8 +816,6 @@ id text
 id text1
 id text2
 id text3
-id text4
-id text5
 id textSpacerNoButtons
 id textSpacerNoTitle
 id time
@@ -937,6 +931,7 @@ string effects
 string gratz
 string hello
 string idk
+string min
 string minutesTillSmoke
 string minutesTillSnus
 string noMoreSmoke

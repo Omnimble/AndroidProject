@@ -1,8 +1,8 @@
 package com.example.project;
 
 import android.content.SharedPreferences;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.widget.TextView;
 
 import com.google.gson.Gson;
@@ -23,8 +23,6 @@ public class Statistics extends AppCompatActivity {
         TextView s1 = findViewById(R.id.stat1);
         TextView s2 = findViewById(R.id.stat2);
         TextView s3 = findViewById(R.id.stat3);
-        TextView s4 = findViewById(R.id.stat4);
-        TextView s5 = findViewById(R.id.stat5);
         TextView stop = findViewById(R.id.statTop);
 
         s1.setText(String.valueOf(calc.getAmountUsedToday()));
