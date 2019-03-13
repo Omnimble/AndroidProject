@@ -1,15 +1,11 @@
 package com.example.project;
 
-import java.io.Serializable;
-import java.util.Calendar;
 import java.util.Date;
 
-@SuppressWarnings("serial")
-class DayCounter implements Serializable {
-
+class DayCounter {
     private int daysTotal;
     private Date endDate = new Date();
-    private Date currentDate = new Date();
+
 
     DayCounter() {
 
@@ -24,9 +20,12 @@ class DayCounter implements Serializable {
     }
 
     int getDaysLeft() {
-        setCurrentDate();
-        long dif = endDate.getTime() - getCurrentDate().getTime();
-        long sec = dif / 1000;
+        long dif = endDate.getTime() - System.currentTimeMillis();
+        return (millisToDays(dif));
+    }
+
+    int millisToDays(long millis) {
+        long sec = millis / 1000;
         long min = sec / 60;
         long hrs = min / 60;
         return ((int) (hrs / 24) + 1);
@@ -38,13 +37,5 @@ class DayCounter implements Serializable {
 
     void setEndDate(Date date) {
         endDate = date;
-    }
-
-    void setCurrentDate() {
-        currentDate = Calendar.getInstance().getTime();
-    }
-
-    Date getCurrentDate() {
-        return currentDate;
     }
 }

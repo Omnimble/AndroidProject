@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/darkBack"
     tools:context=".DefaultView">
 
     <Button
@@ -47,24 +48,24 @@
         android:id="@+id/days"
         android:layout_width="87dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="16dp"
         android:textSize="24sp"
-        app:layout_constraintEnd_toEndOf="@+id/daysLeft"
-        app:layout_constraintStart_toStartOf="@+id/daysLeft"
-        app:layout_constraintTop_toBottomOf="@+id/daysLeft" />
-
-    <TextView
-        android:id="@+id/adJustedDailyAmount"
-        android:layout_width="84dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:textSize="24sp"
-        app:layout_constraintEnd_toEndOf="@+id/adjustedDailyAmount"
-        app:layout_constraintStart_toStartOf="@+id/adjustedDailyAmount"
-        app:layout_constraintTop_toBottomOf="@+id/adjustedDailyAmount" />
+        app:layout_constraintEnd_toEndOf="@+id/daysText"
+        app:layout_constraintStart_toStartOf="@+id/daysText"
+        app:layout_constraintTop_toBottomOf="@+id/daysText" />
 
     <TextView
         android:id="@+id/adjustedDailyAmount"
+        android:layout_width="82dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:textSize="24sp"
+        app:layout_constraintEnd_toEndOf="@+id/adjustedText"
+        app:layout_constraintStart_toStartOf="@+id/adjustedText"
+        app:layout_constraintTop_toBottomOf="@+id/adjustedText" />
+
+    <TextView
+        android:id="@+id/adjustedText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
@@ -76,7 +77,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/daysLeft"
+        android:id="@+id/daysText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
@@ -117,7 +118,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
-        android:id="@+id/statsbtn"
+        android:id="@+id/open_stats_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"

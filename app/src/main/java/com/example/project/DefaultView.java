@@ -20,15 +20,15 @@ import android.widget.TextView;
 import com.google.gson.Gson;
 
 public class DefaultView extends AppCompatActivity {
-
     User user = new User();
     DayCounter dayc = new DayCounter();
-    NicotineCalculator calc = new NicotineCalculator(user, dayc);
-    Timer timer = new Timer(dayc, calc);
-
+    Calculator calc = new Calculator(user, dayc);
+    Timer timer = new Timer(calc);
     Gson gson = new Gson();
     CountDownTimer countDownTimer;
     BroadcastReceiver dayChangeReceiver;
+    boolean isRunning = false;
+    boolean dontBeep;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,74 +46,102 @@ public class DefaultView extends AppCompatActivity {
         };
         registerReceiver(dayChangeReceiver, filter);
 
-        final SharedPreferences userDetails = getApplicationContext().getSharedPreferences("MyPref", MODE_PRIVATE);
-        String userJson = userDetails.getString("userObject", "");
-        String daycJson = userDetails.getString("daycObject", "");
-        String calcJson = userDetails.getString("calcObject", "");
-        String timerJson = userDetails.getString("timerObject", "");
-        user = gson.fromJson(userJson, User.class);
-        dayc = gson.fromJson(daycJson, DayCounter.class);
-        calc = gson.fromJson(calcJson, NicotineCalculator.class);
-        timer = gson.fromJson(timerJson, Timer.class);
+        Button statsbtn = findViewById(R.id.open_stats_button);
+        statsbtn.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                savePrefs();
+                Intent intent = new Intent(DefaultView.this, Statistics.class);
+                startActivity(intent);
+            }
+        });
 
-        calc.setDaílyAmount();
-        calc.setAdjustedDailyAmount();
+        Button settingsbtn = findViewById(R.id.open_settings_button);
+        settingsbtn.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                SharedPreferences userDetails = getApplicationContext().getSharedPreferences("MyPref", MODE_PRIVATE);
+                SharedPreferences.Editor edit = userDetails.edit();
+                edit.putBoolean("accessSettings", true);
+                edit.apply();
+                savePrefs();
+                Intent intent = new Intent(DefaultView.this, Settings.class);
+                startActivity(intent);
+            }
+        });
+
+        Button un = findViewById(R.id.useNow);
+        un.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                countDownTimer.cancel();
+                isRunning = false;
+                calc.useNow();
+                timer.setInterval();
+                updateUI();
+                calc.setFirstOfTheDay(false);
+                createTimer();
+            }
+        });
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
         updateUI();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        loadPrefs();
+        calc.setDailyAmount();
+        calc.setAdjustedDailyAmount();
+
+        updateUI();
+        createTimer();
+    }
+
+    public void updateUI() {
+        calc.setAdjustedDailyAmount();
+        TextView d = findViewById(R.id.days);
+        TextView da = findViewById(R.id.adjustedDailyAmount);
+        TextView cd = findViewById(R.id.countdown);
+        TextView cdt = findViewById(R.id.countdownText);
+        TextView at = findViewById(R.id.adjustedText);
+        TextView dt = findViewById(R.id.daysText);
+        TextView un = findViewById(R.id.useNow);
+        d.setText(String.valueOf(dayc.getDaysLeft()));
+        da.setText(String.valueOf(calc.getAdjustedDailyAmount()));
+
+        if (!isRunning && calc.getAdjustedDailyAmount() == 0) {
+            if (user.getType() == 1) {
+                cd.setText(":(");
+                cdt.setText(R.string.noMoreSmoke);
+            } else {
+                cd.setText(":(");
+                cdt.setText(R.string.noMoreSnus);
+            }
+        }
         if (dayc.getDaysLeft() < 1) {
-            Button un = findViewById(R.id.useNow);
-            TextView cd = findViewById(R.id.countdown);
-            TextView cdt = findViewById(R.id.countdownText);
-            TextView at = findViewById(R.id.adjustedDailyAmount);
-            TextView dt = findViewById(R.id.daysLeft);
+            d.setVisibility(View.GONE);
+            da.setVisibility(View.GONE);
+            cd.setVisibility(View.GONE);
             un.setVisibility(View.GONE);
             cd.setVisibility(View.GONE);
             at.setVisibility(View.GONE);
             dt.setVisibility(View.GONE);
             cdt.setText(R.string.gratz);
-
         }
-
-        createTimer();
-        Button un = findViewById(R.id.useNow);
-        un.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                calc.useNow();
-                timer.setInterval();
-                countDownTimer.cancel();
-                updateUI();
-                if (calc.getAdjustedDailyAmount() == calc.getAmountUsedToday()) {
-                    TextView cd = findViewById(R.id.countdown);
-                    cd.setText("");
-                    updateUI();
-                } else {
-                    createTimer();
-                    updateUI();
-                }
-
-            }
-        });
-
-        Button statsbtn = findViewById(R.id.statsbtn);
-        statsbtn.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                final SharedPreferences.Editor edit = userDetails.edit();
-                String userJson = gson.toJson(user);
-                edit.putString("userObject", userJson);
-                edit.apply();
-                Intent intent = new Intent(DefaultView.this, Statistics.class);
-                startActivity(intent);
-            }
-        });
     }
 
     // sendNotificationiin
     // https://stackoverflow.com/questions/45462666/notificationcompat-builder-deprecated-in-android-o
-    private void sendNotification(String title, String body) {
-        Intent i = new Intent(this, Settings.class);
-        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        PendingIntent pi = PendingIntent.getActivity(this,
+    void sendNotification(String title, String body) {
+        Intent intent = new Intent(this, DefaultView.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this,
                 0 /* Request code */,
-                i,
+                intent,
                 PendingIntent.FLAG_ONE_SHOT);
 
         Uri sound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
@@ -125,7 +153,8 @@ public class DefaultView extends AppCompatActivity {
                 .setContentText(body)
                 .setAutoCancel(true)
                 .setSound(sound)
-                .setContentIntent(pi);
+                .setContentIntent(pendingIntent)
+                .setAutoCancel(true);
 
         NotificationManager manager =
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
@@ -137,9 +166,39 @@ public class DefaultView extends AppCompatActivity {
         @Override
         public void onReceive(Context context, Intent intent) {
             calc.resetAmountUsedToday();
-            timer.setMillisLeftOver(0);
+            timer.setTimer(0);
         }
     };
+
+    void loadPrefs() {
+        // Ladataan jsonit prefeistä ja muunnetaan ne takaisin olioiksi
+        SharedPreferences userDetails = getApplicationContext().getSharedPreferences("MyPref", MODE_PRIVATE);
+        String userJson = userDetails.getString("userObject", "");
+        String daycJson = userDetails.getString("daycObject", "");
+        String calcJson = userDetails.getString("calcObject", "");
+        String timerJson = userDetails.getString("timerObject", "");
+        dontBeep = userDetails.getBoolean("dontBeep", true);
+        user = gson.fromJson(userJson, User.class);
+        dayc = gson.fromJson(daycJson, DayCounter.class);
+        calc = gson.fromJson(calcJson, Calculator.class);
+        timer = gson.fromJson(timerJson, Timer.class);
+    }
+
+    void savePrefs() {
+        // Muutetaan oliot jsoniksi ja talletetaan prefeihin
+        SharedPreferences userDetails = getApplicationContext().getSharedPreferences("MyPref", MODE_PRIVATE);
+        SharedPreferences.Editor edit = userDetails.edit();
+        String userJson = gson.toJson(user);
+        String daycJson = gson.toJson(dayc);
+        String calcJson = gson.toJson(calc);
+        String timerJson = gson.toJson(timer);
+        edit.putString("userObject", userJson);
+        edit.putString("daycObject", daycJson);
+        edit.putString("calcObject", calcJson);
+        edit.putString("timerObject", timerJson);
+        edit.putBoolean("dontBeep", false);
+        edit.apply();
+    }
 
     @Override
     public void onBackPressed() {
@@ -152,33 +211,41 @@ public class DefaultView extends AppCompatActivity {
         countDownTimer = new CountDownTimer(timer.getInterval(), 1000) {
             @Override
             public void onTick(long millisUntilFinished) {
-                timer.setMillisLeftOver(millisUntilFinished);
+                isRunning = true;
                 timer.setTimer(millisUntilFinished);
-                updateUI();
                 if (user.getType() == 1) {
                     cdt.setText(R.string.minutesTillSmoke);
                 } else {
                     cdt.setText(R.string.minutesTillSnus);
                 }
                 cd.setText(String.valueOf(millisUntilFinished / 1000 / 60));
+                updateUI();
             }
 
             @Override
             public void onFinish() {
                 countDownTimer.cancel();
-                cd.setText("");
                 if (calc.getAdjustedDailyAmount() > 0) {
-                    if (user.getType() == 1) {
+                    cd.setText(":)");
+                    if (!dontBeep) {
+                        if (user.getType() == 1) {
+                            cdt.setText(R.string.nowSmoke);
+                            sendNotification("Röökitauko", "Ei muuta ku rööki huulee");
+                        } else {
+                            cdt.setText(R.string.nowSnus);
+                            sendNotification("Nuuskatauko", "Ei muuta ku pussi huulee");
+                        }
+                    } else if (user.getType() == 1) {
                         cdt.setText(R.string.nowSmoke);
-                        sendNotification("Röökitauko", "Ei muuta ku rööki huulee");
                     } else {
                         cdt.setText(R.string.nowSnus);
-                        sendNotification("Nuuskatauko", "Ei muuta ku pussi huulee");
                     }
                 } else if (user.getType() == 1) {
+                    cd.setText(":(");
                     cdt.setText(R.string.noMoreSmoke);
 
                 } else if (user.getType() == 2) {
+                    cd.setText(":(");
                     cdt.setText(R.string.noMoreSnus);
                 }
             }
@@ -192,44 +259,21 @@ public class DefaultView extends AppCompatActivity {
         }
     }
 
-    public void updateUI() {
-        calc.setAdjustedDailyAmount();
-        TextView d = findViewById(R.id.days);
-        TextView da = findViewById(R.id.adjustedDailyAmount);
-        d.setText(String.valueOf(dayc.getDaysLeft()));
-        da.setText(String.valueOf(calc.getAdjustedDailyAmount()));
-        if (calc.getAmountUsedToday() == calc.getAdjustedDailyAmount()) {
-            TextView cd = findViewById(R.id.countdown);
-            cd.setText("");
-        }
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-
-        timer.setTimerDestroyed(false);
-        updateUI();
-    }
-
     @Override
     public void onPause() {
         super.onPause();
 
-        final SharedPreferences userDetails = getApplicationContext().getSharedPreferences("MyPref", MODE_PRIVATE);
-        final SharedPreferences.Editor edit = userDetails.edit();
+        countDownTimer.cancel();
+        timer.setTimerWasDestroyed();
+        isRunning = false;
+        savePrefs();
+    }
 
-        timer.setTimerDestroyed(true);
-        timer.setTimeOnDestroyed();
-        String userJson = gson.toJson(timer);
-        String daycJson = gson.toJson(timer);
-        String calcJson = gson.toJson(timer);
-        String timerJson = gson.toJson(timer);
-        edit.putString("userObject", userJson);
-        edit.putString("daycObject", daycJson);
-        edit.putString("calcObject", calcJson);
-        edit.putString("timerObject", timerJson);
-        edit.apply();
+    @Override
+    public void onStop() {
+        super.onStop();
+
+
     }
 
     @Override
