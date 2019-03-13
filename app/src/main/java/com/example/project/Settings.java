@@ -26,6 +26,7 @@ public class Settings extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
 
+        // Ladataan prefit, jos sellaisia on
         loadPrefs();
         if (!loadPrefs()) { // Ei avata tätä activitya, jos vanha käyttäjä
             Intent intent = new Intent(Settings.this, DefaultView.class);
@@ -147,8 +148,6 @@ public class Settings extends AppCompatActivity {
             dayc = gson.fromJson(daycJson, DayCounter.class);
             calc = gson.fromJson(calcJson, Calculator.class);
             timer = gson.fromJson(timerJson, Timer.class);
-        } else {
-            calc.setFirstOfTheDay(true);
         }
         return (userDetails.getBoolean("accessSettings", true));
     }

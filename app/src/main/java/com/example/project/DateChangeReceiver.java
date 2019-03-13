@@ -5,6 +5,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
+// En saa toimimaan, pitäisi saada apille tieto kulkemaan kun päivä vaihtuu
+
 public class DateChangeReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {

@@ -19,6 +19,14 @@ import android.widget.TextView;
 
 import com.google.gson.Gson;
 
+/*
+
+Muutamassa kohdassa olen laittanut lähteen mistä olen saanut koodinpätkät BroadCastReceivereiden
+käyttöön. Mutta eivät tällä hetkellä edes toimi. Appi lähettää ilmoituksia VAIN, jos se on
+käynnissä taustalla. Ei suljettuna
+
+ */
+
 public class DefaultView extends AppCompatActivity {
     User user = new User();
     DayCounter dayc = new DayCounter();
@@ -76,7 +84,6 @@ public class DefaultView extends AppCompatActivity {
                 calc.useNow();
                 timer.setInterval();
                 updateUI();
-                calc.setFirstOfTheDay(false);
                 createTimer();
             }
         });
@@ -121,7 +128,7 @@ public class DefaultView extends AppCompatActivity {
                 cd.setText(":(");
                 cdt.setText(R.string.noMoreSnus);
             }
-        }
+        } // Nikotiinin käyttö loppuu, onnitellaan
         if (dayc.getDaysLeft() < 1) {
             d.setVisibility(View.GONE);
             da.setVisibility(View.GONE);
@@ -134,7 +141,7 @@ public class DefaultView extends AppCompatActivity {
         }
     }
 
-    // sendNotificationiin
+    // TOIMII VAIN APIN OLLESSA PÄÄLLÄ
     // https://stackoverflow.com/questions/45462666/notificationcompat-builder-deprecated-in-android-o
     void sendNotification(String title, String body) {
         Intent intent = new Intent(this, DefaultView.class);
@@ -205,6 +212,7 @@ public class DefaultView extends AppCompatActivity {
 
     }
 
+    // Näytöllä oleva laskuri
     public void createTimer() {
         final TextView cd = findViewById(R.id.countdown);
         final TextView cdt = findViewById(R.id.countdownText);
@@ -218,7 +226,6 @@ public class DefaultView extends AppCompatActivity {
                 } else {
                     cdt.setText(R.string.minutesTillSnus);
                 }
-                //cd.setText(String.valueOf(millisUntilFinished / 1000 / 60));
                 cd.setText(convertMillis(millisUntilFinished));
                 updateUI();
             }
@@ -277,6 +284,7 @@ public class DefaultView extends AppCompatActivity {
 
     }
 
+    // Ei varmaan toimi
     @Override
     public void onDestroy() {
         if (dateChangeReceiver != null) { // https://stackoverflow.com/questions/4805269/programmatically-register-a-broadcast-receiver
@@ -286,6 +294,7 @@ public class DefaultView extends AppCompatActivity {
         super.onDestroy();
     }
 
+    // Muutetaan millisekunnit hhmmss formaattiin
     public String convertMillis(long durationInMillis) {
         long millis = durationInMillis % 1000;
         long second = (durationInMillis / 1000) % 60;

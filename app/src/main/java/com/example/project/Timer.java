@@ -20,6 +20,7 @@ class Timer {
         return interval;
     }
 
+    // Laskee mitä näytöllä oleva laskuri näyttää
     void setInterval() {
         if (!timerWasDestroyed) {
             if (calc.getAmountUsedToday() == 0) {

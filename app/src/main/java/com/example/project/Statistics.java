@@ -25,6 +25,7 @@ public class Statistics extends AppCompatActivity {
         TextView s3 = findViewById(R.id.stat3);
         TextView stop = findViewById(R.id.statTop);
 
+        // Antaa käyttäjälle liipadaapa tietoja
         s1.setText(String.valueOf(calc.getAmountUsedToday()));
         s2.setText(String.valueOf(calc.getTotalUsed()));
         s3.setText(String.valueOf(calc.getTotalUnused()));

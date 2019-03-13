@@ -7,13 +7,13 @@ class Calculator {
     private int adjustedDailyAmount;
     private int amountUsedToday;
     private int totalUsed;
-    private boolean firstOfTheDay = true;
 
     Calculator(User user, DayCounter dayc) {
         this.user = user;
         this.dayc = dayc;
     }
 
+    // Käytä nikotiinia
     void useNow() {
         if (adjustedDailyAmount > 0) {
             amountUsedToday += 1;
@@ -31,6 +31,7 @@ class Calculator {
 
     }
 
+    // Käyttäjän alkuperäinen nikotiinin kulutus päivässä
     void setDailyAmount() {
         if (user.getStrength() == 3 && user.getType() == 2) {
             dailyAmount = (int) ((double) user.getAmount() * 1.5 * 14 / 7);
@@ -47,14 +48,17 @@ class Calculator {
         }
     }
 
+    // Loppupäiväksi laskettu nikotiiniannos määrä
     void setAdjustedDailyAmount() {
         adjustedDailyAmount = dailyAmount - (int) (((double) dayc.getDaysPassed() / (double) dayc.getDaysTotal()) * (double) dailyAmount) - amountUsedToday;
     }
 
+    // Montako nikotiiniannosta käyttänyt
     int getTotalUsed() {
         return totalUsed;
     }
 
+    // Montako nikotiiniannosta vielä edessä
     int getTotalUnused() {
         int daysPassedNow = dayc.getDaysPassed();
         int daysTotal = dayc.getDaysTotal();
@@ -65,13 +69,5 @@ class Calculator {
            totalUnused += adjustedDailyAmount;
         }
         return totalUnused;
-    }
-
-    void setFirstOfTheDay(boolean x) {
-        firstOfTheDay = x;
-    }
-
-    boolean getFirstOfTheDay() {
-        return firstOfTheDay;
     }
 }
